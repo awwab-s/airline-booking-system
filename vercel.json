@@ -1,0 +1,68 @@
+{
+  "outputDirectory": "public",
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/html/home.html",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/php/adminaddflight.php",
+      "destination": "/api/adminaddflight"
+    },
+    {
+      "source": "/php/admindeleteflight.php",
+      "destination": "/api/admindeleteflight"
+    },
+    {
+      "source": "/php/adminsignin.php",
+      "destination": "/api/adminsignin"
+    },
+    {
+      "source": "/php/adminupdateflight.php",
+      "destination": "/api/adminupdateflight"
+    },
+    {
+      "source": "/php/adminupdateflight2.php",
+      "destination": "/api/adminupdateflight2"
+    },
+    {
+      "source": "/php/adminviewbookings.php",
+      "destination": "/api/adminviewbookings"
+    },
+    {
+      "source": "/php/adminviewflights.php",
+      "destination": "/api/adminviewflights"
+    },
+    {
+      "source": "/php/bookflight.php",
+      "destination": "/api/bookflight"
+    },
+    {
+      "source": "/php/flights.php",
+      "destination": "/api/flights"
+    },
+    {
+      "source": "/php/passengerinfo.php",
+      "destination": "/api/passengerinfo"
+    },
+    {
+      "source": "/php/payment.php",
+      "destination": "/api/payment"
+    },
+    {
+      "source": "/php/processpayment.php",
+      "destination": "/api/processpayment"
+    },
+    {
+      "source": "/php/searchflight.php",
+      "destination": "/api/searchflight"
+    },
+    {
+      "source": "/php/ticket.php",
+      "destination": "/api/ticket"
+    }
+  ]
+}
