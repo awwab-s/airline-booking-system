@@ -10,59 +10,59 @@
   "rewrites": [
     {
       "source": "/php/adminaddflight.php",
-      "destination": "/api/adminaddflight"
+      "destination": "/api/php?__page=adminaddflight"
     },
     {
       "source": "/php/admindeleteflight.php",
-      "destination": "/api/admindeleteflight"
+      "destination": "/api/php?__page=admindeleteflight"
     },
     {
       "source": "/php/adminsignin.php",
-      "destination": "/api/adminsignin"
+      "destination": "/api/php?__page=adminsignin"
     },
     {
       "source": "/php/adminupdateflight.php",
-      "destination": "/api/adminupdateflight"
+      "destination": "/api/php?__page=adminupdateflight"
     },
     {
       "source": "/php/adminupdateflight2.php",
-      "destination": "/api/adminupdateflight2"
+      "destination": "/api/php?__page=adminupdateflight2"
     },
     {
       "source": "/php/adminviewbookings.php",
-      "destination": "/api/adminviewbookings"
+      "destination": "/api/php?__page=adminviewbookings"
     },
     {
       "source": "/php/adminviewflights.php",
-      "destination": "/api/adminviewflights"
+      "destination": "/api/php?__page=adminviewflights"
     },
     {
       "source": "/php/bookflight.php",
-      "destination": "/api/bookflight"
+      "destination": "/api/php?__page=bookflight"
     },
     {
       "source": "/php/flights.php",
-      "destination": "/api/flights"
+      "destination": "/api/php?__page=flights"
     },
     {
       "source": "/php/passengerinfo.php",
-      "destination": "/api/passengerinfo"
+      "destination": "/api/php?__page=passengerinfo"
     },
     {
       "source": "/php/payment.php",
-      "destination": "/api/payment"
+      "destination": "/api/php?__page=payment"
     },
     {
       "source": "/php/processpayment.php",
-      "destination": "/api/processpayment"
+      "destination": "/api/php?__page=processpayment"
     },
     {
       "source": "/php/searchflight.php",
-      "destination": "/api/searchflight"
+      "destination": "/api/php?__page=searchflight"
     },
     {
       "source": "/php/ticket.php",
-      "destination": "/api/ticket"
+      "destination": "/api/php?__page=ticket"
     }
   ]
 }
