@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // echo "First Name: " . $firstName . "<br>";
     // echo "Last Name: " . $lastName . "<br>";
     // echo "Gender: " . $gender . "<br>";
-    echo("Phone Number: " + $phoneNumber + "<br>");
+    // echo("Phone Number: " + $phoneNumber + "<br>");
     // echo "Booking Reference: " . $bookingReference . "<br>";
 
     // Retrieve the flight_no and flight_class from the booking table based on booking_reference
