@@ -1,54 +1,71 @@
-// Vercel version of php/searchflight.php (same logic, ported line by line)
-const { php, echo, die, mysqli } = require('./_lib/php');
+// Vercel version of php/payment.php (same logic, ported line by line)
+const { php, echo, die, empty, mysqli } = require('../_lib/php');
 
 module.exports = php(async ($_GET, $_POST, $_SERVER) => {
-let $conn = '', $dbname = '', $defaultDestination = '', $defaultOrigin = '', $destinationOptions = '', $destinationQuery = '', $destinationResult = '', $originOptions = '', $originQuery = '', $originResult = '', $password = '', $row = '', $selected = '', $servername = '', $username = '';
+let $bookingReference = '', $conn = '', $dbname = '', $firstName = '', $flightClass = '', $flightNo = '', $gender = '', $lastName = '', $password = '', $phoneNumber = '', $priceColumn = '', $resultBooking = '', $resultPrice = '', $rowBooking = '', $rowPrice = '', $servername = '', $sqlBooking = '', $sqlPrice = '', $totalPrice = '', $username = '';
 
 $servername = process.env.DB_HOST; // was "localhost" on XAMPP
 $username = process.env.DB_USER; // was "root" on XAMPP
 $password = process.env.DB_PASSWORD; // was "" on XAMPP
 $dbname = "project";
 
-// Create connection
 $conn = await mysqli($servername, $username, $password, $dbname);
 
 if ($conn.connect_error) {
     die("Connection failed: " + $conn.connect_error);
 }
 
-// Fetch distinct origin cities from the flights table
-$originQuery = "SELECT DISTINCT origin FROM flights ORDER BY origin ASC";
-$originResult = await $conn.query($originQuery);
+$totalPrice = '';
 
-// Fetch distinct destination cities from the flights table
-$destinationQuery = "SELECT DISTINCT destination FROM flights ORDER BY destination ASC";
-$destinationResult = await $conn.query($destinationQuery);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-$originOptions = '';
-$destinationOptions = '';
+    // Calculate and display total price
 
-$defaultOrigin = 'Lahore';
-$defaultDestination = 'Islamabad';
+    $firstName = $_POST['firstName'];
+    $lastName = $_POST['lastName'];
+    $gender = $_POST['gender'];
+    $phoneNumber = $_POST['phoneNumber'];
+    $bookingReference = $_POST['bookingReference'];
 
-$originOptions += '<option value="" disabled selected>Select Origin</option>';
-$destinationOptions += '<option value="" disabled selected>Select Destination</option>';
+    // echo "First Name: " . $firstName . "<br>";
+    // echo "Last Name: " . $lastName . "<br>";
+    // echo "Gender: " . $gender . "<br>";
+    echo("Phone Number: " + $phoneNumber + "<br>");
+    // echo "Booking Reference: " . $bookingReference . "<br>";
 
-if ($originResult.num_rows > 0) {
-    while ($row = $originResult.fetch_assoc()) {
-        $selected = ($row['origin'] === $defaultOrigin) ? 'selected' : '';
-        $originOptions += '<option value="' + $row['origin'] + '" ' + $selected + '>' + $row['origin'] + '</option>';
+    // Retrieve the flight_no and flight_class from the booking table based on booking_reference
+    $sqlBooking = `SELECT flight_no, flight_class FROM booking WHERE booking_reference = '${$bookingReference}'`;
+    $resultBooking = await $conn.query($sqlBooking);
+
+    if ($resultBooking !== false && $resultBooking.num_rows > 0) {
+        $rowBooking = $resultBooking.fetch_assoc();
+        $flightNo = $rowBooking['flight_no'];
+        $flightClass = $rowBooking['flight_class'];
+        // echo "Flight No: " . $flightNo . "<br>";
+        // echo "Flight Class: " . $flightClass . "<br>";
+
+        // Fetch the price based on the class for the given flight number
+        if ($flightClass === 'Economy') {
+            $priceColumn = 'economy_price';
+        } else if ($flightClass === 'Business') {
+            $priceColumn = 'business_price';
+        }
+
+        // Retrieve the price from the flights table based on flight_no and flight_class
+        $sqlPrice = `SELECT ${$priceColumn} AS price FROM flights WHERE flight_no = '${$flightNo}'`;
+        $resultPrice = await $conn.query($sqlPrice);
+
+        if ($resultPrice !== false && $resultPrice.num_rows > 0) {
+            $rowPrice = $resultPrice.fetch_assoc();
+            $totalPrice = $rowPrice['price']; // Set the total price
+        } else {
+            $totalPrice = "Price information not found for the selected flight.";
+        }
     }
 }
 
-if ($destinationResult.num_rows > 0) {
-    while ($row = $destinationResult.fetch_assoc()) {
-        $selected = ($row['destination'] === $defaultDestination) ? 'selected' : '';
-        $destinationOptions += '<option value="' + $row['destination'] + '" ' + $selected + '>' + $row['destination'] + '</option>';
-    }
-}
-
-// Close the database connection
 await $conn.close();
+
 
 echo(`
 <!DOCTYPE html>
@@ -76,7 +93,7 @@ echo(`
             border: 1px solid #9f9f9f;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             margin: 50px 50px;
-            width: 60%;
+            width: 40%;
         }
 
         .card-body {
@@ -142,45 +159,39 @@ echo(`
         </div>
     </nav>
 
-    <!--Book a flight-->
+    <!--Payment section-->
     <div class = "container col-md-10 bg-white p-5">
         <div class="row justify-content-center">
             <div class="card">
                 <div class="card-body">
-                    <h3 class="text-center mb-4 mt-2">Book a Flight</h3>
-                    <form method="POST" action="../php/bookflight.php" onsubmit="return validateForm()">
-                        <div class="form-group">
-                            <label for="origin">Select Origin:</label>
-                            <select class="form-control" id="origin" name="origin" required>
-                                ${$originOptions}                            </select>
+                    <h3 class="text-center mb-5 mt-2">Payment</h3>
+                    <form method="POST" action="../php/ticket.php">
+                        `);
+ if (!empty($totalPrice)) { 
+echo(`                            <h5>Total Amount: Rs ${$totalPrice}</h5>
+                            <input type="hidden" name="totalPrice" value="${$totalPrice}">
+                        `);
+ } 
+echo(`                        <div class="form-group mt-4">
+                            <label for="creditCardNumber">Enter Credit Card Number:</label>
+                            <input type="text" class="form-control" id="creditCardNumber" name="creditCardNumber" pattern="\\d{5}" title="Please enter a 5-digit number" required>
                         </div>
-                        <div class="form-group">
-                            <label for="destination">Select Destination:</label>
-                            <select class="form-control" id="destination" name="destination" required>
-                                ${$destinationOptions}                            </select>
+                        <input type = "hidden" name = "firstName" value = "${$firstName}">
+                        <input type = "hidden" name = "lastName" value = "${$lastName}">
+                        <input type = "hidden" name = "gender" value = "${$gender}">
+                        <input type = "hidden" name = "phoneNumber" value = "${$phoneNumber}">
+                        <input type = "hidden" name = "bookingReference" value = "${$bookingReference}">
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary mt-3">Pay</button>
                         </div>
-                        <div class="form-group">
-                            <label for="departureDate">Departure Date:</label>
-                            <input type="date" id="departureDate" name="departureDate" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="flightClass">Flight Class:</label><br>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="flightClass" id="economyClass" value="Economy" checked required>
-                                <label class="form-check-label" for="economyClass">Economy Class</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="flightClass" id="businessClass" value="Business" required>
-                                <label class="form-check-label" for="businessClass">Business Class</label>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary mt-3">Search FLight</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    
+
+    `);
+echo(`    
     <!-- Contact Us section -->
     <section class="contact-section">
         <div class="container-fluid">
@@ -214,19 +225,6 @@ echo(`
 
     <!-- Custom JavaScript file -->
     <script src="custom.js"></script>
-
-    <script>
-    function validateForm() {
-        var origin = document.getElementById("origin").value;
-        var destination = document.getElementById("destination").value;
-
-        if (origin === destination) {
-            alert("Origin and destination cities cannot be the same!");
-            return false; // Prevent form submission
-        }
-        return true; // Allow form submission
-    }
-    </script>
 </body>
 </html>
 `);

@@ -1,5 +1,5 @@
 // Vercel version of php/processpayment.php (same logic, ported line by line)
-const { php, echo, die, isset, mysqli } = require('./_lib/php');
+const { php, echo, die, isset, mysqli } = require('../_lib/php');
 
 module.exports = php(async ($_GET, $_POST, $_SERVER) => {
 let $balance = '', $conn = '', $creditCardNumber = '', $dbname = '', $newBalance = '', $password = '', $resultCheckCard = '', $resultUpdate = '', $row = '', $servername = '', $sqlCheckCard = '', $sqlUpdateBalance = '', $totalPrice = '', $username = '';

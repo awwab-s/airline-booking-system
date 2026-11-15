@@ -1,5 +1,5 @@
 // Vercel version of php/flights.php (same logic, ported line by line)
-const { php, echo, die, date, date_default_timezone_set, mysqli } = require('./_lib/php');
+const { php, echo, die, date, date_default_timezone_set, mysqli } = require('../_lib/php');
 
 module.exports = php(async ($_GET, $_POST, $_SERVER) => {
 let $arrival_hour = '', $arrival_time = '', $conn = '', $current_day = '', $current_hour = '', $departure_hour = '', $departure_time = '', $flight_status = '', $password = '', $result = '', $row = '', $servername = '', $sql_create_db = '', $sql_display = '', $username = '';

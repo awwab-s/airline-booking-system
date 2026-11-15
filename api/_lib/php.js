@@ -97,7 +97,8 @@ function php(page) {
     const store = { out: [], conns: [], status: 200, location: null };
     await requestStore.run(store, async () => {
       try {
-        await page(req.query || {}, bodyOf(req), { REQUEST_METHOD: req.method });
+        const { __page, ...query } = req.query || {};   // __page is added by vercel.json, not part of the original request
+        await page(query, bodyOf(req), { REQUEST_METHOD: req.method });
       } catch (e) {
         if (e instanceof Exit) store.out.push(e.msg);
         else { console.error(e); store.status = 500; store.out.push('Server error. Check the Vercel function logs.'); }

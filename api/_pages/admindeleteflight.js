@@ -1,5 +1,5 @@
 // Vercel version of php/admindeleteflight.php (same logic, ported line by line)
-const { php, echo, die, isset, mysqli } = require('./_lib/php');
+const { php, echo, die, isset, mysqli } = require('../_lib/php');
 
 module.exports = php(async ($_GET, $_POST, $_SERVER) => {
 let $conn = '', $dbname = '', $flightNo = '', $password = '', $result_check = '', $servername = '', $sql_check = '', $sql_delete = '', $username = '';

@@ -1,5 +1,5 @@
 // Vercel version of php/adminviewflights.php (same logic, ported line by line)
-const { php, echo, die, isset, date, date_default_timezone_set, mysqli } = require('./_lib/php');
+const { php, echo, die, isset, date, date_default_timezone_set, mysqli } = require('../_lib/php');
 
 module.exports = php(async ($_GET, $_POST, $_SERVER) => {
 let $arrival_hour = '', $arrival_time = '', $business_price = '', $conn = '', $current_hour = '', $dbname = '', $departure_hour = '', $departure_time = '', $economy_price = '', $flight_status = '', $password = '', $result = '', $row = '', $selectedDay = '', $servername = '', $sortCriteria = '', $sql_display = '', $username = '';

@@ -1,5 +1,5 @@
 // Vercel version of php/adminupdateflight2.php (same logic, ported line by line)
-const { php, echo, die, isset, mysqli } = require('./_lib/php');
+const { php, echo, die, isset, mysqli } = require('../_lib/php');
 
 module.exports = php(async ($_GET, $_POST, $_SERVER) => {
 let $conn = '', $currentFlightNo = '', $dbname = '', $newArrivalTime = '', $newBusinessPrice = '', $newDay = '', $newDepartureTime = '', $newDestination = '', $newEconomyPrice = '', $newFlightNo = '', $newOrigin = '', $originalArrivalTime = '', $originalBusinessPrice = '', $originalDay = '', $originalDepartureTime = '', $originalDestination = '', $originalEconomyPrice = '', $originalFlightNo = '', $originalOrigin = '', $password = '', $result = '', $row = '', $servername = '', $sql_select = '', $updateSql = '', $username = '';

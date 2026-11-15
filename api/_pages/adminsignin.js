@@ -1,5 +1,5 @@
 // Vercel version of php/adminsignin.php (same logic, ported line by line)
-const { php, echo } = require('./_lib/php');
+const { php, echo } = require('../_lib/php');
 
 module.exports = php(async ($_GET, $_POST, $_SERVER) => {
 echo(`<!DOCTYPE html>

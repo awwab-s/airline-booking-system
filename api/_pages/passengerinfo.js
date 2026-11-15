@@ -1,41 +1,51 @@
-// Vercel version of php/adminupdateflight.php (same logic, ported line by line)
-const { php, echo, header, die, isset, mysqli } = require('./_lib/php');
+// Vercel version of php/passengerinfo.php (same logic, ported line by line)
+const { php, echo, die, isset, mysqli } = require('../_lib/php');
+const { generateRandomNumber, isUniqueReference, generateBookingReference } = require('../_lib/bookingfunctions');
 
 module.exports = php(async ($_GET, $_POST, $_SERVER) => {
-let $conn = '', $dbname = '', $originalFlightNo = '', $password = '', $result_check = '', $servername = '', $sql_check = '', $username = '';
+let $booking_reference = '', $conn = '', $dbname = '', $flight_class = '', $flight_date = '', $flight_no = '', $password = '', $servername = '', $sql_insert = '', $username = '';
+echo(`
+<!-- Processing booking requests -->
+`);
 
-    $servername = process.env.DB_HOST; // was "localhost" on XAMPP
-    $username = process.env.DB_USER; // was "root" on XAMPP
-    $password = process.env.DB_PASSWORD; // was "" on XAMPP
-    $dbname = "project";
+$servername = process.env.DB_HOST; // was "localhost" on XAMPP
+$username = process.env.DB_USER; // was "root" on XAMPP
+$password = process.env.DB_PASSWORD; // was "" on XAMPP
+$dbname = "project";
 
-    // Create connection
-    $conn = await mysqli($servername, $username, $password, $dbname);
+// Create connection
+$conn = await mysqli($servername, $username, $password, $dbname);
 
-    if ($conn.connect_error) {
-        die("Connection failed: " + $conn.connect_error);
+if ($conn.connect_error) {
+    die("Connection failed: " + $conn.connect_error);
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['flight_no']) && isset($_GET['flight_date']) && isset($_GET['flight_class'])) {
+    $flight_no = $_GET['flight_no'];
+    $flight_date = $_GET['flight_date'];
+    $flight_class = $_GET['flight_class'];
+
+    //echo "Flight No: " . $flight_no . "<br>";
+    //echo "Flight Date: " . $flight_date . "<br>";
+    //echo "Flight Class: " . $flight_class . "<br>";
+
+    // Generate a unique booking reference
+    $booking_reference = await generateBookingReference($conn);
+    //echo "Booking Reference: " . $booking_reference;
+
+    // SQL query to insert data into the booking table
+    $sql_insert = `INSERT INTO booking (booking_reference, flight_no, flight_date, flight_class) 
+            VALUES ('${$booking_reference}', '${$flight_no}', '${$flight_date}', '${$flight_class}')`;
+
+    if (await $conn.query($sql_insert) === true) {
+        //echo "New record created successfully";
+    } else {
+        echo("Error: " + $sql_insert + "<br>" + $conn.error);
     }
+}
 
-    // Check if flight number exists in the database
-    if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['flightNo'])) {
-        $originalFlightNo = $_GET['flightNo'];
-
-        // Check if the Flight No exists in the database
-        $sql_check = `SELECT flight_no FROM flights WHERE flight_no = '${$originalFlightNo}'`;
-        $result_check = await $conn.query($sql_check);
-
-        if ($result_check.num_rows > 0) {
-            // Flight No exists, redirect to adminupdateflight2.php
-            header(`Location: ../php/adminupdateflight2.php?flightNo=${$originalFlightNo}`);
-            return;
-        } else {
-            // Flight No doesn't exist
-            echo("<script>alert('Flight No does not exist in the database');</script>");
-        }
-    }
 
 echo(`
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,27 +61,31 @@ echo(`
 
     <!-- Link to the external CSS file -->
     <link rel="stylesheet" href="../css/airline.css">
-    <link rel="stylesheet" href="../css/admin.css">
 
     <style>
-        .form-control {
-            width: 200px; 
-            padding-left: 5px;
-        }
-
-        .form-control:focus {
-            border-color: #80bdff;
-            box-shadow: none;
-        }
-
-        .btn-primary {
-            width: 50%;
-        }
-
-        .col-md-10.bg-white.p-3 {
+        .col-md-10.bg-white {
             min-height: 600px;
         }
 
+        .card {
+            border: 1px solid #9f9f9f;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 50px 50px;
+            width: 60%;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #003c7d;
+        }
     </style>
 </head>
 <body>
@@ -123,54 +137,44 @@ echo(`
         </div>
     </nav>
 
-    <!-- Admin Dashboard -->
-    <div class="container-fluid mt-3 mb-3">
+    <!--Passenger details-->
+    <div class = "container col-md-10 bg-white p-5">
         <div class="row justify-content-center">
-            <div class="col-md-11">
-                <div class="row">
-                    <!-- Side Panel -->
-                    <div class="col-md-2">
-                        <div class="list-group">
-                            <!-- Sidebar items -->
-                            <!-- View Flights -->
-                            <a href="../php/adminviewflights.php" class="list-group-item list-group-item-action">View Flights</a>
-                            <!-- Add a Flight -->
-                            <a href="../php/adminaddflight.php" class="list-group-item list-group-item-action">Add a Flight</a>
-                            <!-- Update a Flight -->
-                            <a href="../php/adminupdateflight.php" class="list-group-item list-group-item-action active">Update a Flight</a>
-                            <!-- Delete a Flight -->
-                            <a href="../php/admindeleteflight.php" class="list-group-item list-group-item-action">Delete a Flight</a>
-                            <!-- View Bookings -->
-                            <a href="../php/adminviewbookings.php" class="list-group-item list-group-item-action">View Bookings</a>
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="text-center mb-4 mt-2">Passenger Details</h3>
+                    <form method="POST" action="../php/payment.php">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName" required>
                         </div>
-                    </div>
-                    <!-- White background for content -->
-                    <div class="col-md-10 bg-white p-3">
-                        <!-- Form to add a new flight -->
-                        <div class="container mt-5">
-                            <div class="row justify-content-center">
-                                <div class="col-md-6">
-                                    <div class="card mt-5">
-                                        <div class="card-body">
-                                            <h3 class="card-title text-center mb-4">Update a Flight</h3>
-                                            <form method="GET" action="">
-                                                <div class="form-group">
-                                                    <label for="flightNo">Enter Flight No:</label>
-                                                    <input type="text" class="form-control" id="flightNo" name="flightNo" pattern="^AAA\\d{3}$" title="Please enter a valid Flight No starting with AAA and followed by 3 digits" maxlength="6" required>
-                                                </div>
-                                                <button type="submit" class="btn btn-primary btn-block mt-5">Update Flight</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Gender:</label><br>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="gender" id="male" value="Male" required>
+                                <label class="form-check-label" for="male">Male</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="gender" id="female" value="Female" required>
+                                <label class="form-check-label" for="female">Female</label>
                             </div>
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label for="phoneNumber">Phone Number</label>
+                            <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" pattern="[0-9]{11}" required>
+                            <small id="phoneNumberHelp" class="form-text text-muted">Please enter 11 digits.</small>
+                        </div>
+                        <input type="hidden" name="bookingReference" value="${$booking_reference}">
+                        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-
     
     <!-- Contact Us section -->
     <section class="contact-section">

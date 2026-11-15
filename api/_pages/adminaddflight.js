@@ -1,5 +1,5 @@
 // Vercel version of php/adminaddflight.php (same logic, ported line by line)
-const { php, echo, die, mysqli } = require('./_lib/php');
+const { php, echo, die, mysqli } = require('../_lib/php');
 
 module.exports = php(async ($_GET, $_POST, $_SERVER) => {
 let $arrivalTime = '', $businessPrice = '', $conn = '', $day = '', $dbname = '', $departureTime = '', $destination = '', $economyPrice = '', $flightNo = '', $origin = '', $password = '', $result_check = '', $servername = '', $sql_check = '', $sql_insert = '', $username = '';

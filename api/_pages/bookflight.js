@@ -1,5 +1,5 @@
 // Vercel version of php/bookflight.php (same logic, ported line by line)
-const { php, echo, die, date, strtotime, date_default_timezone_set, mysqli } = require('./_lib/php');
+const { php, echo, die, date, strtotime, date_default_timezone_set, mysqli } = require('../_lib/php');
 
 module.exports = php(async ($_GET, $_POST, $_SERVER) => {
 let $arrival_hour = '', $arrival_time = '', $bookAvailability = '', $conn = '', $currentDate = '', $currentHour = '', $current_hour = '', $dayOfWeek = '', $dbname = '', $departure_hour = '', $departure_time = '', $destination = '', $flightClass = '', $flightDate = '', $flight_status = '', $origin = '', $password = '', $result = '', $row = '', $servername = '', $sql_display = '', $username = '';
